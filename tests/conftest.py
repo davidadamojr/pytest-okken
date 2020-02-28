@@ -3,19 +3,24 @@ import tasks
 from tasks import Task
 
 
-@pytest.fixture()
-def tasks_db(tmpdir):
+@pytest.fixture(scope='session')
+def tasks_db_session(tmpdir_factory):
     """Connect to db before tests, disconnect after"""
-    # Setup : start db
-    tasks.start_tasks_db(str(tmpdir), 'tiny')
+    temp_dir = tmpdir_factory.mktemp('temp')
+    tasks.start_tasks_db(str(temp_dir), 'tiny')
 
-    yield  # this is where the testing happens
+    yield
 
-    # Teardown : stop db
     tasks.stop_tasks_db()
 
 
 @pytest.fixture()
+def tasks_db(tasks_db_session):
+    """An empty tasks db."""
+    tasks.delete_all()
+
+
+@pytest.fixture(scope='session')
 def tasks_just_a_few():
     """All summaries and owners are unique."""
     return (
@@ -25,7 +30,7 @@ def tasks_just_a_few():
     )
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def tasks_mult_per_owner():
     """Several owners with several tasks each."""
     return (

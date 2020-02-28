@@ -20,4 +20,4 @@ def test_some_data(some_data):
 
 def test_a_tuple(a_tuple):
     """Demo the a_tuple fixture."""
-    assert a_tuple[3]['bar'] == 32
+    assert a_tuple[3]['bar'] == 23
