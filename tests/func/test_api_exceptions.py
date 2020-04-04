@@ -1,5 +1,7 @@
 import pytest
+
 import tasks
+from tasks import Task
 
 
 def test_add_raises():
@@ -29,6 +31,19 @@ def test_get_raises():
     """get() should raise an exception with wrong type param."""
     with pytest.raises(TypeError):
         tasks.get(task_id='123')
+
+
+@pytest.mark.usefixtures('tasks_db')
+class TestAdd():
+    """Tests related to tasks.add()."""
+    def test_missing_summary(self):
+        with pytest.raises(ValueError):
+            tasks.add(Task(owner='bob'))
+
+    def test_done_not_bool(self):
+        """should raise an exception if done is not a bool"""
+        with pytest.raises(ValueError):
+            tasks.add(Task(summary='summary', done='True'))
 
 
 class TestUpdate():
